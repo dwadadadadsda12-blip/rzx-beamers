@@ -1,4 +1,4 @@
-```html id="2l5u9y"
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -35,28 +35,10 @@ canvas{
     padding:20px;
 }
 
-/* TÍTULO GLITCH */
+/* TÍTULO */
 .title{
     font-size:clamp(28px,6vw,50px);
     color:white;
-    position:relative;
-}
-
-.title::before,
-.title::after{
-    content:"RzX BEAMERS";
-    position:absolute;
-    left:0;
-}
-
-.title::before{
-    color:red;
-    transform:translate(2px,-2px);
-}
-
-.title::after{
-    color:blue;
-    transform:translate(-2px,2px);
 }
 
 /* BOTÃO */
@@ -73,37 +55,19 @@ canvas{
 .btn:hover{
     background:#00ffcc;
     color:black;
-    box-shadow:0 0 15px #00ffcc;
 }
 
 /* STATUS */
 .status{
-    margin-top:15px;
-    font-size:13px;
-    color:#aaa;
-}
-
-/* RESULTADOS */
-.result{
     margin-top:10px;
-    font-size:16px;
+    font-size:13px;
 }
 
-.allow{color:#00ffcc}
-.block{color:red}
-
-/* TERMINAL */
-.terminal{
-    position:absolute;
-    bottom:10px;
-    left:10px;
-    font-size:10px;
-    max-width:90%;
-}
-
-/* MOBILE */
-@media(max-width:600px){
-    .terminal{display:none;}
+/* CLIQUES */
+.clicks{
+    margin-top:5px;
+    font-size:12px;
+    color:#aaa;
 }
 
 /* FOOTER */
@@ -125,23 +89,20 @@ canvas{
 
     <div class="title">RzX BEAMERS</div>
 
-    <a href="#" class="btn" onclick="startSystem()">>> INICIAR ACESSO <<</a>
+    <div class="status" id="status">🟢 Bot Online</div>
 
-    <div class="status" id="status">Sistema ocioso...</div>
-
-    <div id="result" class="result"></div>
-
-    <a id="invite" class="btn" style="display:none;" href="https://discord.com/oauth2/authorize?client_id=1486878289443426364&permissions=8&integration_type=0&scope=bot">
-        >> ENTRAR NO SISTEMA <<
+    <a href="SEU_LINK_OAUTH2_AQUI" class="btn" onclick="trackClick()">
+        >> ADICIONAR APP <<
     </a>
+
+    <div class="clicks" id="clicks">Carregando cliques...</div>
 
 </div>
 
-<div class="terminal" id="terminal"></div>
 <div class="footer">created by Is back</div>
 
 <script>
-// MATRIX
+// MATRIX LEVE (mobile ok)
 const canvas=document.getElementById("matrix");
 const ctx=canvas.getContext("2d");
 
@@ -171,64 +132,27 @@ ctx.fillText(text,i*fontSize,drops[i]*fontSize);
 if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
 drops[i]++;
 }
+requestAnimationFrame(draw);
 }
-setInterval(draw,33);
+draw();
 
-// TERMINAL
-const terminal=document.getElementById("terminal");
-
-function log(msg){
-terminal.innerHTML+=msg+"<br>";
-terminal.scrollTop=terminal.scrollHeight;
+// TRACKING CLIQUES
+function trackClick(){
+fetch("https://api.countapi.xyz/hit/rzxbeamers/add");
 }
 
-// 🌐 API FAKE
-function fakeAPI(endpoint){
-return new Promise((resolve)=>{
-    setTimeout(()=>{
-        if(endpoint==="auth"){
-            resolve({status: Math.random()>0.5 ? "ok" : "denied"});
-        }
-    }, 1200 + Math.random()*2000);
+// MOSTRAR CLIQUES
+fetch("https://api.countapi.xyz/get/rzxbeamers/add")
+.then(res=>res.json())
+.then(data=>{
+    document.getElementById("clicks").innerText = "Cliques: " + data.value;
 });
-}
 
-// SISTEMA
-async function startSystem(){
-
-let status=document.getElementById("status");
-let result=document.getElementById("result");
-
-status.innerText="Conectando API...";
-result.innerText="";
-log("POST /auth");
-
-let steps=[
-"Inicializando protocolo...",
-"Quebrando firewall...",
-"Injetando credenciais...",
-"Validando acesso..."
-];
-
-for(let step of steps){
-    status.innerText=step;
-    await new Promise(r=>setTimeout(r,800));
-}
-
-let res=await fakeAPI("auth");
-
-if(res.status==="ok"){
-    status.innerText="Acesso autorizado.";
-    result.innerHTML="<span class='allow'>✔ ACESSO LIBERADO</span>";
-    log("200 OK");
-    document.getElementById("invite").style.display="inline-block";
-}else{
-    status.innerText="Acesso negado.";
-    result.innerHTML="<span class='block'>❌ ACESSO NEGADO</span>";
-    log("403 FORBIDDEN");
-}
-
-}
+// PROTEÇÃO BÁSICA
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.onkeydown = function(e){
+    if(e.key === "F12") return false;
+};
 </script>
 
 </body>
