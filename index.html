@@ -1,0 +1,236 @@
+```html id="2l5u9y"
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RzX Beamers</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    background:black;
+    color:#00ffcc;
+    font-family:monospace;
+    overflow:hidden;
+}
+
+/* MATRIX */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1;
+}
+
+/* CENTRAL */
+.screen{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    padding:20px;
+}
+
+/* TÍTULO GLITCH */
+.title{
+    font-size:clamp(28px,6vw,50px);
+    color:white;
+    position:relative;
+}
+
+.title::before,
+.title::after{
+    content:"RzX BEAMERS";
+    position:absolute;
+    left:0;
+}
+
+.title::before{
+    color:red;
+    transform:translate(2px,-2px);
+}
+
+.title::after{
+    color:blue;
+    transform:translate(-2px,2px);
+}
+
+/* BOTÃO */
+.btn{
+    margin-top:25px;
+    padding:14px 28px;
+    border:2px solid #00ffcc;
+    color:#00ffcc;
+    text-decoration:none;
+    transition:.3s;
+    font-size:clamp(14px,3vw,18px);
+}
+
+.btn:hover{
+    background:#00ffcc;
+    color:black;
+    box-shadow:0 0 15px #00ffcc;
+}
+
+/* STATUS */
+.status{
+    margin-top:15px;
+    font-size:13px;
+    color:#aaa;
+}
+
+/* RESULTADOS */
+.result{
+    margin-top:10px;
+    font-size:16px;
+}
+
+.allow{color:#00ffcc}
+.block{color:red}
+
+/* TERMINAL */
+.terminal{
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    font-size:10px;
+    max-width:90%;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+    .terminal{display:none;}
+}
+
+/* FOOTER */
+.footer{
+    position:absolute;
+    bottom:5px;
+    right:10px;
+    font-size:10px;
+    color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="screen">
+
+    <div class="title">RzX BEAMERS</div>
+
+    <a href="#" class="btn" onclick="startSystem()">>> INICIAR ACESSO <<</a>
+
+    <div class="status" id="status">Sistema ocioso...</div>
+
+    <div id="result" class="result"></div>
+
+    <a id="invite" class="btn" style="display:none;" href="https://discord.com/oauth2/authorize?client_id=1486878289443426364&permissions=8&integration_type=0&scope=bot">
+        >> ENTRAR NO SISTEMA <<
+    </a>
+
+</div>
+
+<div class="terminal" id="terminal"></div>
+<div class="footer">created by Is back</div>
+
+<script>
+// MATRIX
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+
+canvas.height=window.innerHeight;
+canvas.width=window.innerWidth;
+
+let letters="01RZX";
+letters=letters.split("");
+
+let fontSize=14;
+let columns=canvas.width/fontSize;
+
+let drops=[];
+for(let x=0;x<columns;x++)drops[x]=1;
+
+function draw(){
+ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#00ffcc";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+let text=letters[Math.floor(Math.random()*letters.length)];
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
+drops[i]++;
+}
+}
+setInterval(draw,33);
+
+// TERMINAL
+const terminal=document.getElementById("terminal");
+
+function log(msg){
+terminal.innerHTML+=msg+"<br>";
+terminal.scrollTop=terminal.scrollHeight;
+}
+
+// 🌐 API FAKE
+function fakeAPI(endpoint){
+return new Promise((resolve)=>{
+    setTimeout(()=>{
+        if(endpoint==="auth"){
+            resolve({status: Math.random()>0.5 ? "ok" : "denied"});
+        }
+    }, 1200 + Math.random()*2000);
+});
+}
+
+// SISTEMA
+async function startSystem(){
+
+let status=document.getElementById("status");
+let result=document.getElementById("result");
+
+status.innerText="Conectando API...";
+result.innerText="";
+log("POST /auth");
+
+let steps=[
+"Inicializando protocolo...",
+"Quebrando firewall...",
+"Injetando credenciais...",
+"Validando acesso..."
+];
+
+for(let step of steps){
+    status.innerText=step;
+    await new Promise(r=>setTimeout(r,800));
+}
+
+let res=await fakeAPI("auth");
+
+if(res.status==="ok"){
+    status.innerText="Acesso autorizado.";
+    result.innerHTML="<span class='allow'>✔ ACESSO LIBERADO</span>";
+    log("200 OK");
+    document.getElementById("invite").style.display="inline-block";
+}else{
+    status.innerText="Acesso negado.";
+    result.innerHTML="<span class='block'>❌ ACESSO NEGADO</span>";
+    log("403 FORBIDDEN");
+}
+
+}
+</script>
+
+</body>
+</html>
+```
